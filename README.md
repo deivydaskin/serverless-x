@@ -93,5 +93,5 @@ Trigger: SQS queue message.
 
 CloudWatch Custom Metrics:
 
-Shows an average of tweets likes, retweets, other parameters and a sum of tweets sample.
+Shows an average of tweets likes, retweets, other parameters and a size of tweets sample.
 ![Alt text](image.png)
