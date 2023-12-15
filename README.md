@@ -13,7 +13,17 @@ The API Lambda consists of two groups of endpoints: private and public.
     - Accepts keywords to filter incoming tweets in the request body:
         ```json
         {
-            "keywords": ["", "", ..., ""]
+            "keywords": ["", "", .., ""]
+        }
+        ```
+		Response:
+        ```json
+        {
+			"message": "Stream initialized successfully",
+            "data":
+                {
+                    "streamId": "06cd4958-53c1-43fc-8b67-2e37fff4acb3"
+                }
         }
         ```
 
@@ -25,6 +35,8 @@ The API Lambda consists of two groups of endpoints: private and public.
             "streamId": ""
         }
         ```
+		Response:
+        Has no response body.
 
 ### Public Endpoints (`/public-api`)
 
