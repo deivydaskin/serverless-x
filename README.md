@@ -9,84 +9,84 @@ The API Lambda consists of two groups of endpoints: private and public.
 ### Private Endpoints (`/private-api`)
 
 1. **POST `/stream`**
-    - Initiates a stream of messages from X.
-    - Accepts keywords to filter incoming tweets in the request body:
-        ```json
-        {
-            "keywords": ["", "", .., ""]
-        }
-        ```
+	- Initiates a stream of messages from X.
+	- Accepts keywords to filter incoming tweets in the request body:
+		```json
+		{
+			"keywords": ["", "", .., ""]
+		}
+		```
 		Response:
-        ```json
-        {
+		```json
+		{
 			"message": "Stream initialized successfully",
-            "data": {
-                "streamId": "06cd4958-53c1-43fc-8b67-2e37fff4acb3"
-            }
-        }
-        ```
+			"data": {
+				"streamId": "06cd4958-53c1-43fc-8b67-2e37fff4acb3"
+			}
+		}
+		```
 
 2. **DELETE `/stream`**
-    - Stops an existing stream.
-    - Requires `streamId` to be passed in the request body.
-        ```json
-        {
-            "streamId": ""
-        }
-        ```
+	- Stops an existing stream.
+	- Requires `streamId` to be passed in the request body.
+		```json
+		{
+			"streamId": ""
+		}
+		```
 		Response:
-        Has no response body.
+		Has no response body.
 
 ### Public Endpoints (`/public-api`)
 
 1. **GET `/tweets`**
-    - Retrieves already collected tweets from the database.
-    - Requires the additional query parameter `countryCode` to be passed, e.g.:
-        ```
-        GET /tweets?countryCode=VU
-        ```
-        Response:
-        ```json
-        {
-            "data": [
-                {
-                    "tweetId": "576",
-                    "text": "impedit qui odio",
-                    "metrics": {
-                        "retweets": 654,
-                        "replies": 146,
-                        "likes": 523,
-                        "quotes": 68
-                    },
-                    "id": "ff41e72d-0c42-4f39-a5b5-b13185a12087",
-                    "countryCode": "VU"
-                }
-            ]
-        }
-        ```
+	- Retrieves already collected tweets from the database.
+	- Requires the additional query parameter `countryCode` to be passed, e.g.:
+		```
+		GET /tweets?countryCode=VU
+		```
+		Response:
+		```json
+		{
+			"data": [
+				{
+					"tweetId": "576",
+					"text": "impedit qui odio",
+					"metrics": {
+						"retweets": 654,
+						"replies": 146,
+						"likes": 523,
+						"quotes": 68
+					},
+					"id": "ff41e72d-0c42-4f39-a5b5-b13185a12087",
+					"countryCode": "VU"
+				}
+			]
+		}
+		```
 
 2. **GET `/tweets/:id`**
-    - Gets a particular tweet by its ID, which can be found using the above endpoint, e.g.:
-        ```
-        GET /tweets/ff41e72d-0c42-4f39-a5b5-b13185a12087
-        ```
-        Response:
-        ```json
-        {
-            "data": {
-                "tweetId": "576",
-                "text": "impedit qui odio",
-                "metrics": {
-                    "retweets": 654,
-                    "replies": 146,
-                    "likes": 523,
-                    "quotes": 68
-                },
-                "id": "ff41e72d-0c42-4f39-a5b5-b13185a12087",
-                "countryCode": "VU"
-            }
-        }
-        ```
+	- Gets a particular tweet by its ID, which can be found using the above endpoint, e.g.:
+		```
+		GET /tweets/ff41e72d-0c42-4f39-a5b5-b13185a12087
+		```
+		Response:
+		```json
+		{
+			"data": {
+				"tweetId": "576",
+				"text": "impedit qui odio",
+				"metrics": {
+					"retweets": 654,
+					"replies": 146,
+					"likes": 523,
+					"quotes": 68
+				},
+				"id": "ff41e72d-0c42-4f39-a5b5-b13185a12087",
+				"countryCode": "VU"
+			}
+		}
+		```
 
 Trigger: API Request.
 
