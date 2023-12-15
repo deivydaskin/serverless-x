@@ -90,3 +90,8 @@ Trigger: Invoked directly by another Lambda.
 This component is responsible for processing messages that the Streams Lambda received. Processing involves saving the payload into DynamoDB and sending custom metrics to CloudWatch for further analysis.
 
 Trigger: SQS queue message.
+
+CloudWatch Custom Metrics:
+
+Shows an average of tweets likes, retweets, other parameters and a sum of tweets sample.
+![Alt text](image.png)
