@@ -1,0 +1,119 @@
+org: deivydaskin
+app: serverless-x
+service: serverless-x
+frameworkVersion: '3'
+
+custom:
+  tweetsTableName: 'tweets'
+  usersTableName: 'users'
+  streamsLambdaName: 'streams-lambda-${sls:stage}'
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-lift
+
+package:
+  include:
+    - .env
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  iam:
+    role:
+      statements:
+        # DynamoDB
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+          Resource:
+            - Fn::GetAtt: [ TweetsTable, Arn ]
+            - Fn::GetAtt: [ UsersTable, Arn ]
+        # Invoke Lambda
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource: '*'
+        # CloudWatch Metrics
+        - Effect: Allow
+          Action:
+            - cloudwatch:PutMetricData
+          Resource: '*'
+  httpApi:
+    authorizers:
+      iam:
+        type: request
+        functionName: iam-function
+        enableSimpleResponses: true
+  environment:
+    SQS_TWEETS_QUEUE_URL: ${construct:data-processor-function.queueUrl}
+    STREAMER_LAMBDA_NAME: ${self:custom.streamsLambdaName}
+
+functions:
+  iam-function:
+    handler: src/index.iamHandler
+  stream-initiation-function:
+    handler: src/index.streamInitiationHandler
+    events:
+      - httpApi:
+          path: '/private-api/stream'
+          method: POST
+          authorizer:
+            name: iam
+  stream-termination-function:
+    handler: src/index.streamTerminationHandler
+    events:
+      - httpApi:
+          path: '/private-api/stream'
+          method: DELETE
+          authorizer:
+            name: iam
+  getTweet:
+    handler: src/index.getTweetHandler
+    events:
+      - httpApi:
+          path: '/public-api/tweets/{id}'
+          method: GET
+  getTweets:
+    handler: src/index.getTweetsHandler
+    events:
+      - httpApi:
+          path: '/public-api/tweets'
+          method: GET
+  streams:
+    handler: src/index.streamsHandler
+    name: ${self:custom.streamsLambdaName}
+
+constructs:
+  data-processor-function:
+    type: queue
+    worker:
+      handler: src/index.dataProcessorHandler
+
+resources:
+  Resources:
+    TweetsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.tweetsTableName}
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.usersTableName}
